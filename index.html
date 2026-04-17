@@ -3,15 +3,27 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Alice Portfolio & CV</title>
+    <title>Alice Dezio</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@300;400;700&display=swap"
       rel="stylesheet"
     />
+    <link rel="icon" href="icon.png" />
     <style>
       :root {
         --b-width: 2px;
-        --mono: "Roboto Mono", monospace;
+        --mono: "Azeret Mono", monospace;
+      }
+
+      body {
+        margin: 0;
+        font-family: var(--mono);
+        background-color: #fff;
+        color: #000;
+        font-size: 11px; /* Azeret legge molto bene anche piccolo */
+        text-transform: uppercase;
+        letter-spacing: -0.03em; /* Rende il font più compatto e moderno */
+        overflow-x: hidden;
       }
       * {
         box-sizing: border-box;
@@ -19,16 +31,7 @@
       ::-webkit-scrollbar {
         display: none;
       }
-      body {
-        margin: 0;
-        font-family: var(--mono);
-        background-color: #fff;
-        color: #000;
-        font-size: 11px;
-        text-transform: uppercase;
-        overflow: hidden;
-        scrollbar-width: none;
-      }
+
       header {
         position: fixed;
         top: 0;
@@ -106,7 +109,7 @@
         overflow-y: scroll;
         background-color: #000;
         display: grid;
-        grid-template-columns: 45px 1fr 100px 60px;
+        grid-template-columns: 45px 1fr 130px 60px;
         grid-gap: var(--b-width);
         border-right: var(--b-width) solid #000;
         align-content: start;
@@ -208,13 +211,38 @@
         display: block;
         width: 100%;
       }
+
+      /* --- AGGIUNTE PER MOBILE --- */
+.mobile-project-content {
+  grid-column: 1 / 5; /* Occupa tutta la larghezza della griglia */
+  background: #fff;
+  display: none; /* Nascosto di base su desktop */
+  padding: 0;
+  text-transform: none;
+}
+
+@media (max-width: 720px) {
+  .wrapper { flex-direction: column; }
+  .left-pane { width: 100%; border-right: none; height: auto; overflow-y: visible; }
+  .right-pane { display: none; } /* Nasconde il pannello destro */
+  .left-pane { grid-template-columns: 35px 1fr 100px 50px; }
+  .project-description { column-count: 1; }
+  
+  /* Quando la riga ha classe .active, mostra il div successivo */
+  .project-row.active + .mobile-project-content {
+    display: block;
+    padding: 20px;
+    border-bottom: var(--b-width) solid #000;
+  }
+}
+
     </style>
   </head>
   <body>
     <header>
       <div class="name-home" onclick="location.reload()">Alice Dezio</div>
       <div class="nav-links">
-      <!-- <div class="nav-item" style="padding: 0 15px; font-size: 16px">🌏︎</div> -->
+        <!-- <div class="nav-item" style="padding: 0 15px; font-size: 16px">🌏︎</div> -->
         <div class="dropdown">
           <div class="nav-item">CONTATTI</div>
           <div class="dropdown-content">
@@ -241,8 +269,8 @@
           Hi, I’m Alice, communication designer. <br />
           I love collecting things, photography, handmade crafts, traveling
           solo, discovering different cultures, and embracing new perspectives.
-          I always try to be open and adaptable in my approach to life, what
-          I seek is wonder, knowledge, and growth. <br /><br />
+          I always try to be open and adaptable in my approach to life, what I
+          seek is wonder, knowledge, and growth. <br /><br />
           <div style="text-align: right">
             <span class="more-btn" onclick="toggleCV()">MORE [+]</span>
           </div>
@@ -295,7 +323,12 @@
           institution: "Personal project",
           collaborators: "",
           desc: "A series of postcards exploring the idea of non-places, theorized by the anthropologist Marc Augé. <br><br> Non-places, as opposed to anthropological places, are spaces devoid of social relations, shared histories, or signs of collective belonging. Places of suspension and anonymity that, despite being designed for consumption, always manage to have the opposite effect on me: removing me from the constant speed and excesses of modernity. <br><br> This series of postcards is a tribute to those places and, in some way, an attempt to claim them as my own, to make them a little less impersonal.",
-          images: ["postcards-1.jpg"],
+          images: [
+            "postcards-1.jpg",
+            "postcards-2.png",
+            "postcards-3.png",
+            "postcards-4.png",
+          ],
         },
         {
           id: "02",
@@ -474,7 +507,14 @@
           rowWrapper.id = "row-" + p.id;
           rowWrapper.style.setProperty("--hover-color", p.color);
           rowWrapper.innerHTML = `<div class="cell id-col" onclick="showProjectById('${p.id}')">${p.id}</div><div class="cell" onclick="showProjectById('${p.id}')">${p.title}</div><div class="cell" onclick="showProjectById('${p.id}')">${p.type}</div><div class="cell" onclick="showProjectById('${p.id}')">${p.year}</div>`;
-          container.appendChild(rowWrapper);
+        
+
+          const mobileDetail = document.createElement("div");
+  mobileDetail.className = "mobile-project-content";
+  mobileDetail.id = "mobile-detail-" + p.id;
+
+  container.appendChild(rowWrapper);
+  container.appendChild(mobileDetail); // Inserisce il div mobile subito dopo la riga
         });
         for (let i = 0; i < 25 - projects.length; i++) {
           let n = projects.length + i + 1;
@@ -483,36 +523,97 @@
         }
       }
       function showProjectById(projectId) {
-        const project = projects.find((p) => p.id === projectId);
-        if (project) showProject(project);
-      }
-      function showProject(project) {
-        document
-          .querySelectorAll(".project-row")
-          .forEach((r) => r.classList.remove("active"));
-        const activeRow = document.getElementById("row-" + project.id);
-        if (activeRow) activeRow.classList.add("active");
-        const area = document.getElementById("display-area");
-        let importantHtml = project.important
-          ? `<div class="project-meta-info">${project.important}</div>`
-          : "";
-        let imagesHtml = "";
-        if (project.images && project.images.length > 0) {
-          let base = project.folderPath || "";
-          project.images.forEach((img) => {
-            let style = img.includes("_50")
-              ? "width: 50%; margin: 0 auto;"
-              : "width: 100%;";
-            imagesHtml += `<img src="${base}${img}" style="${style}" alt="${project.title}" onerror="this.style.display='none'">`;
-          });
-        }
-        let finalInfoHtml =
-          project.institution || project.collaborators
-            ? `<div class="project-meta-info" style="margin-top: 40px;">${project.institution || ""}${project.institution && project.year ? ", " + project.year : ""}<br>${project.collaborators || ""}</div>`
-            : "";
-        area.innerHTML = `<div class="project-display"><h1>${project.title}</h1>${importantHtml}<div class="project-description">${project.desc}</div><div class="gallery">${imagesHtml}</div>${finalInfoHtml}</div>`;
-        area.scrollTop = 0;
-      }
+  const project = projects.find((p) => p.id === projectId);
+  if (!project) return;
+
+  const activeRow = document.getElementById("row-" + project.id);
+  const isMobile = window.innerWidth <= 720;
+
+  // --- LOGICA DI CHIUSURA (TOGGLE) ---
+  if (activeRow.classList.contains("active")) {
+    // Se clicco sul progetto già aperto, lo chiudo
+    activeRow.classList.remove("active");
+    
+    if (isMobile) {
+      document.getElementById("mobile-detail-" + project.id).innerHTML = "";
+    } else {
+      // Su desktop resettiamo l'area di destra con il messaggio iniziale
+      document.getElementById("display-area").innerHTML = `
+        <div style="opacity: 0.2; text-align: center; margin-top: 100px">
+          <p>Explore the projects</p>
+        </div>`;
+    }
+    return; // Esci dalla funzione, non andare avanti
+  }
+
+  // --- LOGICA DI APERTURA (Se non era già attivo) ---
+  
+  // 1. Rimuovi active da tutti gli altri
+  document.querySelectorAll(".project-row").forEach((r) => r.classList.remove("active"));
+  
+  // 2. Aggiungi active a quello cliccato
+  activeRow.classList.add("active");
+
+  // 3. Genera il contenuto (Usa la tua logica esistente o questa abbreviata)
+  let importantHtml = project.important ? `<div class="project-meta-info">${project.important}</div>` : "";
+  let imagesHtml = "";
+  if (project.images && project.images.length > 0) {
+    let base = project.folderPath || "";
+    project.images.forEach((img) => {
+      let style = img.includes("_50") ? "width: 50%; margin: 0 auto;" : "width: 100%;";
+      imagesHtml += `<img src="${base}${img}" style="${style}" alt="${project.title}" onerror="this.style.display='none'">`;
+    });
+  }
+  let finalInfoHtml = (project.institution || project.collaborators) ? 
+    `<div class="project-meta-info" style="margin-top: 40px;">${project.institution || ""}${project.institution && project.year ? ", " + project.year : ""}<br>${project.collaborators || ""}</div>` : "";
+  
+  const fullContent = `<div class="project-display"><h1>${project.title}</h1>${importantHtml}<div class="project-description">${project.desc}</div><div class="gallery">${imagesHtml}</div>${finalInfoHtml}</div>`;
+
+  if (isMobile) {
+    // Pulisce altri eventuali aperti (per sicurezza) e riempie quello corrente
+    document.querySelectorAll(".mobile-project-content").forEach(el => el.innerHTML = "");
+    const mobileContainer = document.getElementById("mobile-detail-" + project.id);
+    mobileContainer.innerHTML = fullContent;
+  } else {
+    const area = document.getElementById("display-area");
+    area.innerHTML = fullContent;
+    area.scrollTop = 0;
+  }
+}
+function showProject(project) {
+  // Gestione classe active (rimane uguale)
+  document.querySelectorAll(".project-row").forEach((r) => r.classList.remove("active"));
+  const activeRow = document.getElementById("row-" + project.id);
+  if (activeRow) activeRow.classList.add("active");
+
+  // Prepariamo l'HTML del progetto (puoi usare la logica che avevi già)
+  let importantHtml = project.important ? `<div class="project-meta-info">${project.important}</div>` : "";
+  let imagesHtml = "";
+  if (project.images && project.images.length > 0) {
+    let base = project.folderPath || "";
+    project.images.forEach((img) => {
+      let style = img.includes("_50") ? "width: 50%; margin: 0 auto;" : "width: 100%;";
+      imagesHtml += `<img src="${base}${img}" style="${style}" alt="${project.title}" onerror="this.style.display='none'">`;
+    });
+  }
+  let finalInfoHtml = (project.institution || project.collaborators) ? 
+    `<div class="project-meta-info" style="margin-top: 40px;">${project.institution || ""}${project.institution && project.year ? ", " + project.year : ""}<br>${project.collaborators || ""}</div>` : "";
+  
+  const fullContent = `<div class="project-display"><h1>${project.title}</h1>${importantHtml}<div class="project-description">${project.desc}</div><div class="gallery">${imagesHtml}</div>${finalInfoHtml}</div>`;
+
+  // LOGICA DI DISTRIBUZIONE
+  if (window.innerWidth <= 720) {
+    // Mobile: Svuota gli altri e riempi quello corrente
+    document.querySelectorAll(".mobile-project-content").forEach(el => el.innerHTML = "");
+    const mobileContainer = document.getElementById("mobile-detail-" + project.id);
+    mobileContainer.innerHTML = fullContent;
+  } else {
+    // Desktop: Riempi l'area di destra
+    const area = document.getElementById("display-area");
+    area.innerHTML = fullContent;
+    area.scrollTop = 0;
+  }
+}
       function sortProjects(key) {
         if (currentSort.key === key) currentSort.asc = !currentSort.asc;
         else {
@@ -539,9 +640,9 @@
           btn.innerHTML = "MORE [+]";
         }
       }
-// Inizializzazione: ordina per ID (01, 02, 03...) al caricamento
-projects.sort((a, b) => a.id.localeCompare(b.id));
-renderProjects();
+      // Inizializzazione: ordina per ID (01, 02, 03...) al caricamento
+      projects.sort((a, b) => a.id.localeCompare(b.id));
+      renderProjects();
     </script>
   </body>
 </html>

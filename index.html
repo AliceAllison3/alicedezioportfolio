@@ -521,7 +521,7 @@
       let currentSort = { key: "id", asc: true };
       function renderProjects() {
         const container = document.getElementById("project-list-container");
-        container.insertAdjacentHTML('beforeend', `<div class="cell id-col">${nStr}</div><div class="cell"></div><div class="cell"></div><div class="cell"></div>`);
+       container.innerHTML = "";
         projects.forEach((p) => {
           const rowWrapper = document.createElement("div");
           rowWrapper.className = "project-row";
@@ -540,7 +540,7 @@
         for (let i = 0; i < 25 - projects.length; i++) {
           let n = projects.length + i + 1;
           let nStr = n < 10 ? "0" + n : n;
-          container.innerHTML += `<div class="cell id-col">${nStr}</div><div class="cell"></div><div class="cell"></div><div class="cell"></div>`;
+         container.insertAdjacentHTML('beforeend', `<div class="cell id-col">${nStr}</div><div class="cell"></div><div class="cell"></div><div class="cell"></div>`);
         }
       }
       function showProjectById(projectId) {
